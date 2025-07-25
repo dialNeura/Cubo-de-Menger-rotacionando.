@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+</head>
+<body>
+  <script>
+    function setup() {
+      createCanvas(windowWidth, windowHeight, WEBGL);
+    }
+
+    function draw() {
+      background(0);
+      ambientLight(50);
+      
+      // Luz direcional orbitando
+      let angle = frameCount * 0.01;
+      let lightX = cos(angle) * 200;
+      let lightZ = sin(angle) * 200;
+      directionalLight(255, 255, 255, lightX, 0, lightZ);
+      
+      // Material com brilho especular
+      specularMaterial(255);
+      
+      // Rotação do cubo
+      rotateY(frameCount * 0.01);
+      rotateX(frameCount * 0.01);
+      
+      // Desenhar o cubo de Menger
+      menger(0, 0, 0, 200, 0);
+    }
+
+    function menger(x, y, z, size, depth) {
+      if (depth == 2) { // Ajustado para profundidade 2 para melhor performance
+        // Interpolar cor baseado na profundidade
+        let c1 = color(0, 255, 255); // Ciano
+        let c2 = color(255, 0, 255); // Magenta
+        let interColor = lerpColor(c1, c2, depth / 2);
+        fill(interColor);
+        push();
+        translate(x, y, z);
+        box(size);
+        pop();
+      } else {
+        let s = size / 3;
+        for (let i = -1; i <= 1; i++) {
+          for (let j = -1; j <= 1; j++) {
+            for (let k = -1; k <= 1; k++) {
+              if (Math.abs(i) + Math.abs(j) + Math.abs(k) > 1) {
+                menger(x + i * s, y + j * s, z + k * s, s, depth + 1);
+              }
+            }
+          }
+        }
+      }
+    }
+  </script>
+</body>
+</html>
